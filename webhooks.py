@@ -8,24 +8,23 @@ app = FastAPI()
 
 
 @app.post("/pull")
-def git_pull():        
+def git_pull():
     subprocess.run(["git", "-C", "/opt/homelab", "pull"])
     subprocess.run(["systemctl", "restart", "fastapi_server.service"])
     return {"status": "ok"}
 
 
-requests.post(
-    "192.168.0.254:2586/pve_alerts",
-    json={
-        "Nachricht": "Test",
-    },
-) 
+@app.post("/test")
+def test_message():
+    requests.post(
+        "http://192.168.0.254:2586/pve_alerts",
+        json={
+            "Nachricht": "Dies ist eine Testnachricht",
+        },
+    )
+    return {"status": "ok"}
 
 
-
-
-   
-    
 """
 # Pihole Warnung
 
