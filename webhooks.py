@@ -24,20 +24,3 @@ def test_message():
         },
     )
     return {"status": "ok"}
-
-
-"""
-# Pihole Warnung
-
-requests.post(
-    timeNow = dt.now().strftime("%d.%m.%y %H:%M")
-    "localhost:8000/ph_Grav",
-    json={
-        "status": "warning(yellow)",
-        "daemon": "pihole",
-        "timestamp": timeNow,
-        "suggestion": "Updating manually in console or via SSH. Probably attaching a API for it",
-    },
-)
-
-"""
