@@ -10,15 +10,17 @@ app = FastAPI()
 @app.post("/pull")
 def git_pull():        
     subprocess.run(["git", "-C", "/opt/homelab", "pull"])
+    subprocess.run(["systemctl", "restart", "fastapi_server.service"])
     return {"status": "ok"}
 
 
 requests.post(
-    "ntfy.dara.best:2586/pve_alerts",
+    "192.168.0.254:2586/pve_alerts",
     json={
         "Nachricht": "Test",
     },
 ) 
+
 
 
 
