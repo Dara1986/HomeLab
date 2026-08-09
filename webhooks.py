@@ -13,7 +13,12 @@ def git_pull():
     return {"status": "ok"}
 
 
- 
+requests.post(
+    "ntfy.dara.best:2586/pve_alerts",
+    json={
+        "Nachricht": "Test",
+    },
+) 
 
 
 
