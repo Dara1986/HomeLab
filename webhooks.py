@@ -13,9 +13,6 @@ def git_pull():
     return {"status": "ok"}
 
 
-# Dies ist zum Testen
-a = 0
-print(a)
 
 
 
