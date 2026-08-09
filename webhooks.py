@@ -13,6 +13,7 @@ def git_pull():
     subprocess.run(["systemctl", "restart", "fastapi_server.service"])
     return {"status": "ok"}
 
+# Testnachricht auf ntfy
 
 @app.post("/test")
 def test_message():
