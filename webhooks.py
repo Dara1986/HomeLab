@@ -1,13 +1,22 @@
 import json
-from datetime import date
 from datetime import datetime as dt
-
+import subprocess
 import requests
 from fastapi import FastAPI
 
 app = FastAPI()
 
 
+
+
+@app.post("/pull")
+def git_pull():
+    subprocess.run(["git", "-C", "/opt/homelab", "pull"])
+    
+
+
+
+"""
 # Pihole Warnung
 
 requests.post(
@@ -21,3 +30,4 @@ requests.post(
     },
 )
 
+"""
