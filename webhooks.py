@@ -7,15 +7,19 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-
-
 @app.post("/pull")
-def git_pull():
+def git_pull():        
     subprocess.run(["git", "-C", "/opt/homelab", "pull"])
+    return {"status": "ok"}
+
+
+
+
+
+
+
+   
     
-
-
-
 """
 # Pihole Warnung
 
