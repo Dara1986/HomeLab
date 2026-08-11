@@ -51,15 +51,3 @@ class ContainerStatus(BaseModel):
         "2" : "[WARNING]",
         "3" : "[CRITICAL]",
     }
-
-# region pct-call
-
-
-
-
-
-
-# endregion
-
-
-    

@@ -1,3 +1,4 @@
+# region imports
 import json
 from datetime import datetime as dt
 import subprocess
@@ -6,8 +7,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from models.py import *
 from abc import ABC
-
+# endregion
 app = FastAPI
+
 
 # Factory:
 
@@ -19,15 +21,15 @@ class MonitoringFactory():
 
     # Erstelle hier objekte mit den Parametern vmid + targetList
     def createMonitor(self):
-        mointors = {}
+        monitors = {}
         for i in range(len(targetList)): 
             id_target = f"{self.vmid}+{self.targetList[i]}"
-            monitors[id_target] = MonitoringFactory()
-            type(monitors[id_target])    
+            monitors[id_target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
+    
 
-class ObjManager():
-    def __init__(self, mointors):
-        self.mointors = mointors
+class ObjManager(MonitoringFactory, DataGrabber):
+    def __init__(self, monitors):
+        self.monitors = monitors
         
 
     @app.post("/{container}/{service}/{name}")
@@ -45,12 +47,23 @@ class DataGrabber():
         self.containerData = conData
         self.ip = ip
 
+
     @app.post("/ConData")
     def getContainerData(self):
         self.conData = {}
-        self.conData = subprocess.run("pct","status", f"{vmid:int}", "--verbose")
-        conData.capture_output
+        user_agent = requests.headers.get(url="localhost:8000")
+        if "Linux" in user_agent: 
+            self.conData = subprocess.run(
+                "pct","status", f"{vmid:int}", "--verbose", capture_output=True)
+            return self.conData.capture_output()
+        else:
+            return {"conData" : "no Data"}
+            
+            
 
+            
+            
+        
 
 
 

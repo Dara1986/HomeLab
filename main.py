@@ -34,3 +34,5 @@ def delete_item():
         return items.pop(0)
     else:
         return "leer"
+
+
