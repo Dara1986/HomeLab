@@ -35,4 +35,3 @@ def delete_item():
     else:
         return "leer"
 
-

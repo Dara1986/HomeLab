@@ -6,12 +6,9 @@ import requests
 from fastapi import FastAPI
 from pydantic import BaseModel
 from models.py import *
-from abc import ABC
-# endregion
+#from abc import ABC
 app = FastAPI
-
-
-# Factory:
+# endregion
 
 class MonitoringFactory():
     def __init__(self, vmid:int, targetList:list=None, target:object=None):
@@ -26,12 +23,89 @@ class MonitoringFactory():
             id_target = f"{self.vmid}+{self.targetList[i]}"
             monitors[id_target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
     
+class DataGrabber():        
+    def __init__(self,  vmid:int, containerData:str, ip:str, targetList:list=None):
+        self.vmid = vmid
+        self.containerData = conData
+        self.ip = ip
+        self.targetList = targetList
 
+    def getContainerData(self):
+        self.conData = subprocess.run(
+            "pct","status", f"{vmid:int}", "--verbose", capture_output=True)
+        return self.conData.stdout.decode("utf-8")
+
+    def getServiceData(self):
+        self.targetList = subprocess.run("pct", "exec", f"{vmid:int}","--","systemctl","list-units","--",
+        "type=service","--state=active", f"{targetList}", capture_output=True)
+        return self.targetList.stdout.decode("utf-8")
+
+        """
+        Durch die komplexe Formatierung der Ausgabe von "pct exec <vmid> -- systemctl list-units --type=service --state=active",
+        ist es notwendig, die Ausgabe in ein lesbares Format zu bringen. Da hier jedoch nur der Name der Services benötigt wird,
+        um die Statusabfrage später befüllen zu können, muss die Ausgabe nur nach den UNIT-Namen gefiltert werden. 
+        Dies kann durch die Verwendung von "awk" erreicht werden, um die erste Spalte der Ausgabe zu extrahieren.
+        Jedoch heißt das auch für die Funktion getServiceData(), dass der komplette Body der Funktion angepasst werden muss.
+        """
+#region Beispielausgabe
+        """
+        Beispielausgabe: 
+
+        root@pve:~# pct exec 203 -- systemctl list-units --type=service --state=active
+        UNIT                               LOAD   ACTIVE SUB     DESCRIPTION                                    
+        console-getty.service              loaded active running Console Getty
+        container-getty@1.service          loaded active running Container Getty on /dev/tty1
+        container-getty@2.service          loaded active running Container Getty on /dev/tty2
+        cron.service                       loaded active running Regular background program processing daemon
+        dbus.service                       loaded active running D-Bus System Message Bus
+        ifupdown-pre.service               loaded active exited  Helper to synchronize boot up for ifupdown
+        ifupdown-wait-online.service       loaded active exited  Wait for network to be configured by ifupdown
+        networking.service                 loaded active exited  Raise network interfaces
+        nftables.service                   loaded active exited  nftables
+        pihole-FTL.service                 loaded active running Pi-hole FTL
+        postfix.service                    loaded active exited  Postfix Mail Transport Agent
+        postfix@-.service                  loaded active running Postfix Mail Transport Agent (instance -)
+        ssh.service                        loaded active running OpenBSD Secure Shell server
+        systemd-journal-flush.service      loaded active exited  Flush Journal to Persistent Storage
+        systemd-journald.service           loaded active running Journal Service
+        systemd-logind.service             loaded active running User Login Management
+        systemd-modules-load.service       loaded active exited  Load Kernel Modules
+        systemd-network-generator.service  loaded active exited  Generate network units from Kernel command line
+        systemd-networkd.service           loaded active running Network Configuration
+        systemd-remount-fs.service         loaded active exited  Remount Root and Kernel File Systems
+        systemd-sysctl.service             loaded active exited  Apply Kernel Variables
+        systemd-sysusers.service           loaded active exited  Create System Users
+        systemd-tmpfiles-setup-dev.service loaded active exited  Create Static Device Nodes in /dev
+        systemd-tmpfiles-setup.service     loaded active exited  Create System Files and Directories
+        systemd-update-utmp.service        loaded active exited  Record System Boot/Shutdown in UTMP
+        systemd-user-sessions.service      loaded active exited  Permit User Sessions
+        """
+#endregion
+            
 class ObjManager(MonitoringFactory, DataGrabber):
-    def __init__(self, monitors):
-        self.monitors = monitors
-        
+    def __init__(self, conData:str, vmid:int, ip:str, targetList:list=None, target:object=None, lines = {}):
+        self.conData = conData
+        self.vmid = vmid
+        self.ip = ip
+        self.targetList = targetList
+        self.target = id_target
+        self.lines = lines
 
+    def parseData(self):
+        self.conData = self.getContainerData()
+        for line in self.conData.splitlines():
+            key, value = line.split(":", 1)
+            self.lines[key.strip()] = value.strip()
+        return self.lines
+
+    def parseServiceData(self):
+        self.targetList = self.getServiceData()
+        for line in self.targetList.splitlines():
+            key, value = line.split(":", 1)
+            self.lines[key.strip()] = value.strip()
+        return self.lines
+
+"""
     @app.post("/{container}/{service}/{name}")
     def Pullnotification(EndPoints):
         requests.post("http://192.168.0.254:2586/pve_alerts",
@@ -40,32 +114,4 @@ class ObjManager(MonitoringFactory, DataGrabber):
         return {
             {"name:", container.service.name}: {"status:", container.service.status},
         }
-
-class DataGrabber():        
-    def __init__(self,  vmid:int, containerData:str, ip:str):
-        self.vmid = vmid
-        self.containerData = conData
-        self.ip = ip
-
-
-    @app.post("/ConData")
-    def getContainerData(self):
-        self.conData = {}
-        user_agent = requests.headers.get(url="localhost:8000")
-        if "Linux" in user_agent: 
-            self.conData = subprocess.run(
-                "pct","status", f"{vmid:int}", "--verbose", capture_output=True)
-            return self.conData.capture_output()
-        else:
-            return {"conData" : "no Data"}
-            
-            
-
-            
-            
-        
-
-
-
-
-        
+"""
