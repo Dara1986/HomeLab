@@ -24,30 +24,40 @@ class MonitoringFactory():
             monitors[id_target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
     
 class DataGrabber():        
-    def __init__(self,  vmid:int, containerData:str, ip:str, targetList:list=None):
+    def __init__(self,  vmid:int, containerData:str, ip:str, targetList:list=None, target:str=None):
         self.vmid = vmid
         self.containerData = conData
         self.ip = ip
         self.targetList = targetList
+        self.target = id_target
 
     def getContainerData(self):
         self.conData = subprocess.run(
             "pct","status", f"{vmid:int}", "--verbose", capture_output=True)
         return self.conData.stdout.decode("utf-8")
 
-    def getServiceData(self):
-        self.targetList = subprocess.run("pct", "exec", f"{vmid:int}","--","systemctl","list-units","--",
-        "type=service","--state=active", f"{targetList}", capture_output=True)
-        return self.targetList.stdout.decode("utf-8")
+    def getServiceName(self):
+        self.targetList = []
+        self.id_target = []
+        self.id_target = subprocess.run("pct", "exec", f"{self.vmid}","--","systemctl","list-units","--",
+        "type=service","--state=active", capture_output=True).stdout.decode("utf-8").splitlines()[1:]
+        for service in self.id_target:
+            self.targetList.append(service.split(None)[0])
+        return self.targetList
+        
+
+    def getServiceStatus(self):
 
         """
+        def getServiceData(self):
+            
         Durch die komplexe Formatierung der Ausgabe von "pct exec <vmid> -- systemctl list-units --type=service --state=active",
         ist es notwendig, die Ausgabe in ein lesbares Format zu bringen. Da hier jedoch nur der Name der Services benötigt wird,
         um die Statusabfrage später befüllen zu können, muss die Ausgabe nur nach den UNIT-Namen gefiltert werden. 
         Dies kann durch die Verwendung von "awk" erreicht werden, um die erste Spalte der Ausgabe zu extrahieren.
         Jedoch heißt das auch für die Funktion getServiceData(), dass der komplette Body der Funktion angepasst werden muss.
         """
-#region Beispielausgabe
+#region Beispielausgabe 1
         """
         Beispielausgabe: 
 
@@ -81,7 +91,37 @@ class DataGrabber():
         systemd-user-sessions.service      loaded active exited  Permit User Sessions
         """
 #endregion
-            
+#region Beispielausgabe 2
+        """ 
+        root@pve:~# pct exec 203 -- systemctl status console-getty.service
+● console-getty.service - Console Getty
+     Loaded: loaded (/lib/systemd/system/console-getty.service; enabled-runtime; preset: disabled)
+     Active: active (running) since Tue 2026-08-18 15:31:04 UTC; 2 days ago
+       Docs: man:agetty(8)
+             man:systemd-getty-generator(8)
+   Main PID: 174 (agetty)
+      Tasks: 1 (limit: 17832)
+     Memory: 264.0K
+        CPU: 1ms
+     CGroup: /system.slice/console-getty.service
+             └─174 /sbin/agetty -o "-p -- \\u" --noclear --keep-baud - 115200,38400,9600 linux
+
+Aug 18 15:31:04 pihole systemd[1]: Started console-getty.service - Console Getty.
+root@pve:~# pct exec 203 -- systemctl status container-getty@1.service
+● container-getty@1.service - Container Getty on /dev/tty1
+     Loaded: loaded (/lib/systemd/system/container-getty@.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-08-18 15:31:04 UTC; 2 days ago
+       Docs: man:agetty(8)
+             man:systemd-getty-generator(8)
+             man:machinectl(1)
+   Main PID: 175 (agetty)
+      Tasks: 1 (limit: 17832)
+     Memory: 204.0K
+        CPU: 1ms
+     CGroup: /system.slice/system-container\x2dgetty.slice/container-getty@1.service
+             └─175 /sbin/agetty -o "-p -- \\u" --noclear - linux
+        """
+#endregion    
 class ObjManager(MonitoringFactory, DataGrabber):
     def __init__(self, conData:str, vmid:int, ip:str, targetList:list=None, target:object=None, lines = {}):
         self.conData = conData
@@ -100,11 +140,9 @@ class ObjManager(MonitoringFactory, DataGrabber):
 
     def parseServiceData(self):
         self.targetList = self.getServiceData()
-        for line in self.targetList.splitlines():
-            key, value = line.split(":", 1)
-            self.lines[key.strip()] = value.strip()
-        return self.lines
-
+        for line in self.targetList.splitlines(1):
+            line = rsplit([".service"], 1)[0]
+            
 """
     @app.post("/{container}/{service}/{name}")
     def Pullnotification(EndPoints):
