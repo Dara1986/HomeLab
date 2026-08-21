@@ -14,36 +14,42 @@ class MonitoringFactory():
     def __init__(self, vmid:int, targetList:list=None, target:object=None):
         self.vmid = vmid
         self.targetList = targetList
-        self.target = id_target
+        self.target = target
 
     # Erstelle hier objekte mit den Parametern vmid + targetList
     def createMonitor(self):
         monitors = {}
         for i in range(len(targetList)): 
-            id_target = f"{self.vmid}+{self.targetList[i]}"
-            monitors[id_target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
+            target = f"{self.vmid}+{self.targetList[i]}"
+            monitors[target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
     
 class DataGrabber():        
-    def __init__(self,  vmid:int, containerData:str, ip:str, targetList:list=None, target:str=None):
+    def __init__(self, vmid_list:list, vmid:int, conData:str, ip:str, targetList:list=None, target:str=None):
+        self.vmid_list = vmid_list
         self.vmid = vmid
-        self.containerData = conData
+        self.conData = conData
         self.ip = ip
         self.targetList = targetList
-        self.target = id_target
+        self.target = target
+
+    def getContainerId(self):
+        self.vmid_list = subprocess.run("pct", "list", capture_output=True).stdout.decode("utf-8").splitlines()[1:]
+        self.vmid = [line.split(None)[0] for line in self.vmid_list]
+        return self.vmid
+        
+            
 
     def getContainerData(self):
         self.conData = subprocess.run(
-            "pct","status", f"{vmid:int}", "--verbose", capture_output=True)
+            "pct","status", f"{self.vmid}", "--verbose", capture_output=True)
         return self.conData.stdout.decode("utf-8")
 
     def getServiceName(self):
-        self.targetList = []
-        self.id_target = []
-        self.id_target = subprocess.run("pct", "exec", f"{self.vmid}","--","systemctl","list-units","--",
-        "type=service","--state=active", capture_output=True).stdout.decode("utf-8").splitlines()[1:]
-        for service in self.id_target:
-            self.targetList.append(service.split(None)[0])
+        self.target = subprocess.run("pct", "exec", f"{self.vmid}","--","systemctl","list-units","--type=service",
+        "--state=active", capture_output=True).stdout.decode("utf-8").splitlines()[1:]
+        self.targetList = [service.split(None)[0] for service in self.target]
         return self.targetList
+        
         
 
     def getServiceStatus(self):
@@ -123,20 +129,15 @@ root@pve:~# pct exec 203 -- systemctl status container-getty@1.service
         """
 #endregion    
 class ObjManager(MonitoringFactory, DataGrabber):
-    def __init__(self, conData:str, vmid:int, ip:str, targetList:list=None, target:object=None, lines = {}):
-        self.conData = conData
-        self.vmid = vmid
-        self.ip = ip
-        self.targetList = targetList
-        self.target = id_target
-        self.lines = lines
+    def __init__(self):
+        pass
 
     def parseData(self):
         self.conData = self.getContainerData()
         for line in self.conData.splitlines():
             key, value = line.split(":", 1)
-            self.lines[key.strip()] = value.strip()
-        return self.lines
+            parsedData[key.strip()] = value.strip()
+        return self.parsedData
 
     def parseServiceData(self):
         self.targetList = self.getServiceData()

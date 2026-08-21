@@ -8,5 +8,13 @@
   "python.linting.pylintPath": "/home/dara86/Entwicklung/repos/HomeLab/.venv/bin/pylint",
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": "/home/dara86/Entwicklung/repos/HomeLab/.venv/bin/flake8",
-  "python.pixiToolPath": ""
+  "python.pixiToolPath": "",
+  "editor.quickSuggestionsDelay": 10,
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.quickSuggestions": {
+    
+    "other": "offWhenInlineCompletions",
+    "comments": "off",
+    "strings": "off"
+  }
 }
