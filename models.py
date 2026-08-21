@@ -8,9 +8,6 @@ from pydantic import BaseModel
 from typing import Optional
 # endregion 
 
-
-
-
 class ContainerStatus(BaseModel):
     # pct status --verbose
     cpus: int
@@ -37,17 +34,21 @@ class ContainerStatus(BaseModel):
     loaded: str
     active: str
     process: Optional[str] = None
-    main_pid: int
+#    main_pid: int
     tasks: int
     memory: str
     cpu: str
-    cgroup: str
+#    cgroup: str
     
-    severity: Optional[str] = None
+    severity: Optional[str] = Severity
 
-    Severity:Enum = {
-        "0" : "[INFO]",
-        "1" : "[OK]",
-        "2" : "[WARNING]",
-        "3" : "[CRITICAL]",
-    }
+class Severity(Enum): 
+    DEBUG     = 7
+    INFO      = 6
+    NOTICE    = 5
+    WARNING   = 4
+    ERROR     = 3
+    CRITICAL  = 2
+    ALERT     = 1
+    EMERGENCY = 0
+    
