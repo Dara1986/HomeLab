@@ -10,6 +10,17 @@ from models.py import *
 app = FastAPI
 # endregion
 
+"""
+    @app.post("/{container}/{service}/{name}")
+    def Pullnotification(EndPoints):
+        requests.post("http://192.168.0.254:2586/pve_alerts",
+        data=data.message
+        )
+        return {
+            {"name:", container.service.name}: {"status:", container.service.status},
+        }
+"""
+
 class MonitoringFactory():
     def __init__(self, vmid:int, targetList:list=None, target:object=None):
         self.vmid = vmid
@@ -24,11 +35,10 @@ class MonitoringFactory():
             monitors[target] = MonitoringFactory()       # Erstellung der Objekte nochmals überdenken.
     
 class DataGrabber():        
-    def __init__(self, vmid_list:list, vmid:int, conData:str, ip:str, targetList:list=None, target:str=None):
+    def __init__(self, vmid_list:list, vmid:int, conData:str, targetList:list=None, target:str=None):
         self.vmid_list = vmid_list
         self.vmid = vmid
         self.conData = conData
-        self.ip = ip
         self.targetList = targetList
         self.target = target
 
@@ -37,12 +47,10 @@ class DataGrabber():
         self.vmid = [line.split(None)[0] for line in self.vmid_list]
         return self.vmid
         
-            
-
     def getContainerData(self):
         self.conData = subprocess.run(
-            "pct","status", f"{self.vmid}", "--verbose", capture_output=True)
-        return self.conData.stdout.decode("utf-8")
+            "pct","status", f"{self.vmid}", "--verbose", capture_output=True).stdout.decode("utf-8")
+        return self.conData
 
     def getServiceName(self):
         self.target = subprocess.run("pct", "exec", f"{self.vmid}","--","systemctl","list-units","--type=service",
@@ -50,19 +58,9 @@ class DataGrabber():
         self.targetList = [service.split(None)[0] for service in self.target]
         return self.targetList
         
-        
-
     def getServiceStatus(self):
-
-        """
-        def getServiceData(self):
-            
-        Durch die komplexe Formatierung der Ausgabe von "pct exec <vmid> -- systemctl list-units --type=service --state=active",
-        ist es notwendig, die Ausgabe in ein lesbares Format zu bringen. Da hier jedoch nur der Name der Services benötigt wird,
-        um die Statusabfrage später befüllen zu können, muss die Ausgabe nur nach den UNIT-Namen gefiltert werden. 
-        Dies kann durch die Verwendung von "awk" erreicht werden, um die erste Spalte der Ausgabe zu extrahieren.
-        Jedoch heißt das auch für die Funktion getServiceData(), dass der komplette Body der Funktion angepasst werden muss.
-        """
+        pass
+    
 #region Beispielausgabe 1
         """
         Beispielausgabe: 
@@ -127,30 +125,5 @@ root@pve:~# pct exec 203 -- systemctl status container-getty@1.service
      CGroup: /system.slice/system-container\x2dgetty.slice/container-getty@1.service
              └─175 /sbin/agetty -o "-p -- \\u" --noclear - linux
         """
-#endregion    
-class ObjManager(MonitoringFactory, DataGrabber):
-    def __init__(self):
-        pass
-
-    def parseData(self):
-        self.conData = self.getContainerData()
-        for line in self.conData.splitlines():
-            key, value = line.split(":", 1)
-            parsedData[key.strip()] = value.strip()
-        return self.parsedData
-
-    def parseServiceData(self):
-        self.targetList = self.getServiceData()
-        for line in self.targetList.splitlines(1):
-            line = rsplit([".service"], 1)[0]
-            
-"""
-    @app.post("/{container}/{service}/{name}")
-    def Pullnotification(EndPoints):
-        requests.post("http://192.168.0.254:2586/pve_alerts",
-        data=data.message
-        )
-        return {
-            {"name:", container.service.name}: {"status:", container.service.status},
-        }
-"""
+#endregion 
+   
