@@ -19,7 +19,7 @@ Description=Service Monitor for {DataGrabber.getContainerId()} + {DataGrabber.ge
 [Service]
 ExecStart=pct exec {DataGrabber.getContainerId()} {self.unit_file_path}
 Restart=on-failure
-OnFailure=notify
+OnFailure=notify-failure@/n.service
 [Install]
 """
     
