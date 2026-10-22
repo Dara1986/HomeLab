@@ -4,7 +4,7 @@ from datetime import datetime
 from serverity import Severity
 
 class Snap_data(BaseModel):
-    dienst_id: int
+    unit_id: int
     timestamp: datetime
     active: str
     loaded: str
@@ -14,5 +14,5 @@ class Snap_data(BaseModel):
     uptime: int
     swap: int
     status: str
-    severity: Optional[Severity] = Severity.DEBUG
+    severity: Severity = Severity.DEBUG
     id: Optional[int] = None
