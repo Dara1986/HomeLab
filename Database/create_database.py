@@ -9,19 +9,19 @@ def create_database():
     con.execute("PRAGMA foreign_keys = ON")
     con.execute("""
     CREATE TABLE IF NOT EXISTS containers (
-        vmid INTEGER PRIMARY KEY,
+        vmid INT PRIMARY KEY,
         name TEXT,
         cpus INTEGER,
-        maxdisk INTEGER,
-        maxmem INTEGER,
-        maxswap INTEGER
+        maxdisk INT,
+        maxmem INT,
+        maxswap INT
     )
 """)
 
     con.execute("""
     CREATE TABLE IF NOT EXISTS units (
-        id INTEGER PRIMARY KEY,
-        container_vmid INTEGER,
+        id INT PRIMARY KEY,
+        container_vmid INT,
         unit_name TEXT,
         FOREIGN KEY (container_vmid) REFERENCES containers(vmid)
     )
@@ -29,16 +29,16 @@ def create_database():
 
     con.execute("""
     CREATE TABLE IF NOT EXISTS snapshots (
-        id INTEGER PRIMARY KEY,
-        unit_id INTEGER,
+        id INT PRIMARY KEY,
+        unit_id INT,
         timestamp TEXT,
         active TEXT,
         loaded TEXT,
-        pid INTEGER,
+        pid INT,
         mem TEXT,
         cpu TEXT,
-        uptime INTEGER,
-        swap INTEGER,
+        uptime INT,
+        swap INT,
         status TEXT,
         severity TEXT DEFAULT 'DEBUG',
         FOREIGN KEY (units_id) REFERENCES units(id)
