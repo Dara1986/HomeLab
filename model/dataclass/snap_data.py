@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from serverity import Severity
+from model.dataclass.serverity import Severity
 
 class Snap_data(BaseModel):
     unit_id: int

@@ -1,7 +1,7 @@
 import sqlite3
 from dataclass.snap_data import Snap_data
 
-class Snap_Repo:
+class Snap_repo:
     def __init__(self, con: sqlite3.Connection):
         self.__con = con
 

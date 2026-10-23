@@ -1,7 +1,7 @@
 import sqlite3
 from dataclass.container_data import Container_data
 
-class Container_Repo:
+class Container_repo:
     def __init__(self, con: sqlite3.Connection):
         self.__con = con
 
