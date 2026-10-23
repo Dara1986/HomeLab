@@ -1,3 +1,4 @@
+# region Monitoring object factory
 class MonitoringFactory():
     def __init__(self, vmid:int, targetList:list, target:object=None):
         self.vmid = vmid
@@ -10,4 +11,5 @@ class MonitoringFactory():
         for i in range(len(self.targetList)): 
             target = f"{self.vmid}+{self.targetList[i]}"
             monitors[target] = MonitoringFactory(self.vmid, self.targetList)       # Erstellung der Objekte nochmals überdenken.
+# endregion
     

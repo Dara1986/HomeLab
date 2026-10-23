@@ -1,3 +1,4 @@
+# region Snapshot persistence operations
 import sqlite3
 from dataclass.snap_data import Snap_data
 
@@ -57,3 +58,4 @@ class Snap_repo:
     )
         self.__con.commit()
         return cur.rowcount
+    # endregion

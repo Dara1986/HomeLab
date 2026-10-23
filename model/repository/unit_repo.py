@@ -1,3 +1,4 @@
+# region Unit persistence operations
 import sqlite3
 from dataclass.unit_data import Unit_data
 
@@ -51,3 +52,4 @@ class Unit_repo:
         )
         self.__con.commit()
         return cur.rowcount
+    # endregion

@@ -1,3 +1,4 @@
+# region Container persistence operations
 import sqlite3
 from dataclass.container_data import Container_data
 
@@ -46,3 +47,4 @@ class Container_repo:
         )
         self.__con.commit()
         return cur.rowcount
+    # endregion

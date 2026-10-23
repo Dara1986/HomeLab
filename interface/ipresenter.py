@@ -1,12 +1,14 @@
+# region Imports
 from abc import ABC, abstractmethod
 from iview import *
 from datetime import datetime
 from model.dataclass.serverity import Severity
+# endregion
 
 class Ipresenter(ABC):
     pass
 
-#region functions from ilivepage_view
+# region Live page presenter methods
     @abstractmethod
     def get_all_unit(self) -> list:
         pass
@@ -22,9 +24,9 @@ class Ipresenter(ABC):
     @abstractmethod
     def get_snaps_by_unit(self, unit_id: int) -> list:
         pass
-#endregion
+# endregion
 
-#region functions from ilogspage_view
+# region Logs page presenter methods
     @abstractmethod
     def get_units(self) -> list:
         pass
@@ -40,10 +42,10 @@ class Ipresenter(ABC):
     @abstractmethod
     def download_log(self, path: str, snaps: list):
         pass
-#endregion
+# endregion
 
-#region from imainpage_view
+# region Main page presenter methods
     @abstractmethod
     def get_db_status(self)-> bool:
         pass
-#endregion
+# endregion

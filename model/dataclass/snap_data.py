@@ -1,3 +1,4 @@
+# region Snapshot data model
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -16,3 +17,4 @@ class Snap_data(BaseModel):
     status: str
     severity: Severity = Severity.DEBUG
     id: Optional[int] = None
+# endregion

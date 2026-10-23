@@ -1,6 +1,7 @@
-#region import
+# region Container and service data collection
+# region Imports
 import subprocess
-#endregion
+# endregion
 
 class DataGrabber():        
     def __init__(self, vmid_list:list, vmid:int, conData:str, targetList:list, target:str, status: str):
@@ -32,3 +33,4 @@ class DataGrabber():
         
     def getServiceStatus(self):
         pass
+# endregion

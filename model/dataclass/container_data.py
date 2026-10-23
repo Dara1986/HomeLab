@@ -1,3 +1,4 @@
+# region Container data model
 from pydantic import BaseModel
 
 class Container_data(BaseModel):
@@ -7,3 +8,4 @@ class Container_data(BaseModel):
     maxdisk: int
     maxmem: int
     maxswap: int
+# endregion

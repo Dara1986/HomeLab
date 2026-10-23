@@ -1,3 +1,4 @@
+# region Logs page view contract
 from abc import ABC, abstractmethod
 from datetime import datetime
 from model.dataclass.serverity import Severity
@@ -19,3 +20,4 @@ class Ilogpage_view(ABC):
     @abstractmethod
     def download_log(self, path: str, snaps: list):
         pass
+# endregion

@@ -1,3 +1,4 @@
+# region Live page view contract
 from abc import ABC, abstractmethod
 
 class Ilivepage_view(ABC):
@@ -17,3 +18,4 @@ class Ilivepage_view(ABC):
     @abstractmethod
     def get_snaps_by_unit(self, unit_id: int) -> list:
         pass
+# endregion

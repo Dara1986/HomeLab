@@ -1,3 +1,4 @@
+# region Severity levels
 from enum import Enum
     
 class Severity(Enum): 
@@ -12,3 +13,4 @@ class Severity(Enum):
     CRITICAL  = 2
     ALERT     = 1
     EMERGENCY = 0
+# endregion

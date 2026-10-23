@@ -1,11 +1,16 @@
-import sqlite3 as s3
+# region Database schema creation
+import sqlite3
 from pathlib import Path
 
-path = Path(__file__).parent / "lxc_factory.db"
 
 
-def create_database():
-    con = s3.connect(path)
+class Create_database:
+    def __init__(self,  s3: sqlite3.Connection, path: Path = Path(__file__).parent / "lxc_factory.db"):
+        self.s3 = s3
+        self.path = path
+
+def create_database(self):
+    con = self.s3.connect(self.path)
     con.execute("PRAGMA foreign_keys = ON")
     con.execute("""
     CREATE TABLE IF NOT EXISTS containers (
@@ -30,7 +35,7 @@ def create_database():
     con.execute("""
     CREATE TABLE IF NOT EXISTS snapshots (
         id INT PRIMARY KEY,
-        unit_id INT,
+        units_id INT,
         timestamp TEXT,
         active TEXT,
         loaded TEXT,
@@ -46,4 +51,5 @@ def create_database():
 """)
     con.commit()
 
-create_database()
+    return con, self.path
+# endregion
